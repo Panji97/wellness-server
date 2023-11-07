@@ -1,0 +1,5 @@
+{
+  "MONGO": "mongodb+srv://panji-restful-api:XJt1S2khXV7zlvpM@cluster1.hagu1g3.mongodb.net/Health?retryWrites=true&w=majority",
+  "CORS": ["http://localhost:5173", "http://localhost:3010"],
+  "KEY": "oFqBkkwx519A/o0nnY4Bxmly2E6FjOma1C/NpT9qw3A="
+}

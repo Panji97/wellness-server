@@ -1,0 +1,29 @@
+# Direktori node_modules dan cache NPM/Yarn
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# File konfigurasi proyek
+.env
+
+# Direktori kompilasi TypeScript
+dist/
+
+# File konfigurasi editor dan IDE
+.vscode/
+.idea/
+
+# File sistem operasi
+Thumbs.db
+.DS_Store
+
+# File log
+*.log
+
+# File sementara
+*.swp
+
+# File konfigurasi yang mungkin disesuaikan dengan alat lain yang digunakan
+# contoh: .eslintrc.js, .prettierrc.js, dll.
+
+/src/.env
