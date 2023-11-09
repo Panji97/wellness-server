@@ -37,7 +37,7 @@ export default class EventController extends ErrorHandler {
   public update() {
     return async (req: Request, res: Response) => {
       try {
-        const result = await this.service.updateEvent(req.body, String(req.user))
+        const result = await this.service.updateEvent(req.body, String(req.user), req.params.id)
 
         return res.status(200).json({ message: result.message, result: result.result })
       } catch (error) {
@@ -49,7 +49,7 @@ export default class EventController extends ErrorHandler {
   public delete() {
     return async (req: Request, res: Response) => {
       try {
-        const result = await this.service.deleteEvent(req.body)
+        const result = await this.service.deleteEvent(req.params.id)
 
         return res.status(200).json({ message: result.message, result: result.result })
       } catch (error) {

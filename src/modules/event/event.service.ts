@@ -1,3 +1,5 @@
+import { Types } from 'mongoose'
+
 import USER_MODEL from '../../models/users'
 import EVENT_MODEL, { EVENT_DOCUMENT } from '../../models/events'
 
@@ -14,15 +16,12 @@ export default class EventService {
         return { message: 'Not have permission', result: null }
       }
 
-      const userVendor = await USER_MODEL.find({ specialist: { $in: payload.tag } })
-
       await EVENT_MODEL.create({
         ...payload,
-        company: userPermission.company,
-        _vendor: userVendor
+        company: userPermission.company
       })
 
-      return { message: true, result: null }
+      return { message: 'Success create event', result: null }
     } catch (error) {
       throw error
     }
@@ -48,13 +47,21 @@ export default class EventService {
             }
           },
           {
+            $unwind: {
+              path: '$vendor'
+            }
+          },
+          {
             $project: {
               _id: 0,
+              id: '$_id',
               company: '$company',
               name: '$name',
-              tag: '$tag',
               status: '$status',
-              vendor: '$vendor.username',
+              remark: '$remark',
+              location: '$location',
+              vendor: '$vendor.company',
+              vendorId: '$vendor._id',
               date: {
                 $map: {
                   input: '$date',
@@ -78,18 +85,11 @@ export default class EventService {
 
         result = await EVENT_MODEL.aggregate(aggregates)
       } else {
-        const vendorData = await USER_MODEL.find({ _id: userId })
-
-        let tags = []
-        for (const data of vendorData) {
-          const dataTag = data.specialist
-
-          tags.push(dataTag)
-        }
-
         const aggregates = [
           {
-            $match: { tag: { $in: tags } }
+            $match: {
+              _vendor: new Types.ObjectId(userId)
+            }
           },
           {
             $lookup: {
@@ -100,13 +100,21 @@ export default class EventService {
             }
           },
           {
+            $unwind: {
+              path: '$vendor'
+            }
+          },
+          {
             $project: {
               _id: 0,
+              id: '$_id',
               company: '$company',
               name: '$name',
-              tag: '$tag',
               status: '$status',
-              vendor: '$vendor.username',
+              remark: '$remark',
+              location: '$location',
+              vendor: '$vendor.company',
+              vendorId: '$vendor._id',
               date: {
                 $map: {
                   input: '$date',
@@ -137,21 +145,33 @@ export default class EventService {
     }
   }
 
-  public async updateEvent(payload: EVENT_DOCUMENT, userId: string) {
+  public async updateEvent(payload: EVENT_DOCUMENT, userId: string, paramsId: string) {
     try {
-      const data = await EVENT_MODEL.findByIdAndUpdate(payload)
+      const userExist = await USER_MODEL.findById(userId)
 
-      return { message: true, result: data }
+      if (!userExist) {
+        return { message: 'User not found', result: null }
+      }
+
+      if (!Array.isArray(payload.date)) {
+        payload.status = 'approve'
+      } else {
+        payload.status = 'reject'
+      }
+
+      await EVENT_MODEL.findByIdAndUpdate(paramsId, payload, { new: true })
+
+      return { message: 'Success update event', result: null }
     } catch (error) {
       throw error
     }
   }
 
-  public async deleteEvent(payload: EVENT_DOCUMENT) {
+  public async deleteEvent(paramsId: string) {
     try {
-      const data = await EVENT_MODEL.findByIdAndUpdate(payload)
+      await EVENT_MODEL.findByIdAndDelete(paramsId)
 
-      return { message: true, result: data }
+      return { message: 'Success delete event', result: null }
     } catch (error) {
       throw error
     }

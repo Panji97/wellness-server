@@ -82,7 +82,7 @@ const ROLES_SCHEMA = new Schema(
   }
 )
 
-const ROLES_MODEL = model<RolesDocument>('user_oles', ROLES_SCHEMA)
+const ROLES_MODEL = model<RolesDocument>('user_roles', ROLES_SCHEMA)
 
 export default ROLES_MODEL
 export type { RolesDocument }

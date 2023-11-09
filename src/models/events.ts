@@ -3,10 +3,10 @@ import { Schema, model, Document } from 'mongoose'
 interface EVENT_PROPS {
   company: string
   name: string
-  tag: string
   date: Date[]
   status: 'approve' | 'reject' | null
   remark: string
+  location: string
   _vendor: string
 }
 
@@ -19,12 +19,6 @@ const EVENT_SCHEMA = new Schema(
       type: String,
       require: true
     },
-    tag: [
-      {
-        type: String,
-        required: true
-      }
-    ],
     date: [
       {
         type: Date
@@ -38,12 +32,13 @@ const EVENT_SCHEMA = new Schema(
     remark: {
       type: String
     },
-    _vendor: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'users'
-      }
-    ]
+    location: {
+      type: String
+    },
+    _vendor: {
+      type: Schema.Types.ObjectId,
+      ref: 'users'
+    }
   },
   {
     timestamps: true
